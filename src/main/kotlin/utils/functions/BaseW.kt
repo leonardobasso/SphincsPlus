@@ -1,5 +1,7 @@
 package org.example.utils.functions
 
+import kotlinx.io.bytestring.ByteString
+
 /**
  * From Sphincs+ Doc [2.5]: A byte string can be considered as a string of base "w" numbers
  *

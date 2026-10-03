@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.8.1")
 }
 
