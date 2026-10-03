@@ -1,14 +1,12 @@
 package org.example.utils.functions
 
-import kotlinx.io.bytestring.ByteString
-
 /**
  * From Sphincs+ Doc [2.5]: A byte string can be considered as a string of base "w" numbers
  *
  * Given a ByteArray, the function returns an array of base "w" integers (w=4 -> i=0,1,2,3)
  *
  * @param byteArray ByteArray to convert into an IntArray
- * @param base element of the set {4,16,256}
+ * @param base element of the set {2,4,8}
  * @param length output IntArray length, must be <= (8 * byteArray.size) / log2(base)
  *
  * @return an array of integers
@@ -16,14 +14,7 @@ import kotlinx.io.bytestring.ByteString
 @OptIn(ExperimentalUnsignedTypes::class)
 fun baseW(byteArray: UByteArray, base: UInt, length: Int): UIntArray {
 
-    require(base == 4u || base == 16u || base == 256u) { "base must be 4, 16 or 256, instead is $base" }
-
-    val log = when (base) {
-        4u -> 2
-        16u -> 4
-        256u -> 8
-        else -> throw IllegalArgumentException("base must be 4, 16 or 256, instead is $base")
-    }
+    val log = log2W(base)
 
     require(length <= (8 * byteArray.size) / log) { "lenght must to be <= ${8 * byteArray.size / log}, instead is $length" }
 
