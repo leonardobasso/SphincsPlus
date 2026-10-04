@@ -3,7 +3,7 @@ package org.example.utils.functions
 /**
  * Given a base of 4, 16 or 256, it returns its log2 value
  *
- * @param base the base, it must be an element of the set {4, 16, 256} [Sphincs+ v3, paragraph 2.5.]
+ * @param base the base, it must be an element of the set {4, 16, 256} [Sphincs+ v3, paragraph 2.5]
  *
  * @return log2(base) in O(1)
  */
@@ -21,7 +21,7 @@ fun log2W(base: Int): Int {
 /**
  * Given a base of 4, 16 or 256, it returns its log2 value
  *
- * @param base the base, it must be an element of the set {4, 16, 256} [Sphincs+ v3, paragraph 2.5.]
+ * @param base the base, it must be an element of the set {4u, 16u, 256u} [Sphincs+ v3, paragraph 2.5]
  *
  * @return log2(base) in O(1)
  */
