@@ -2,24 +2,38 @@ package org.example.utils.classes
 
 import org.example.utils.functions.toByteArray
 import org.example.utils.functions.toInt
-import org.example.utils.interfaces.AddressInterface
 
 /**
  * Implementation of AddressInterface
  *
- * @see AddressInterface
+ * Functions expressed in *paragraph 4.1, table 1 of the SLH-DSA documentation*
+ *
+ * UInt is used instead of ByteAerray, except for the TreeAsset, because of *Sphics+ v3, 2.7.3*:
+ * The structure of an address complies with word borders, with a word being 32 bits long in
+ * this context. Only the tree address (i.e. the index of a specific subtree in the main tree) is too
+ * long to fit a single word: for this, we reserve three words.
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-class Address : AddressInterface {
+class Address {
 
     var address = UByteArray(32)
 
+    /**
+     * Creates a new address which is a deep copy of the original address
+     *
+     * @return a clone of the address
+     */
+    fun copyOf(): Address {
+        val clone = Address()
+        clone.address = this.address.copyOf()
+        return clone
+    }
     /**
      * Sets the Layer Address in the Address Data Structure
      *
      * @param layer the layer address
      */
-    override fun setLayerAddress(layer: UInt) {
+    fun setLayerAddress(layer: UInt) {
         val layerAddress =
             layer.toByteArray(4) // layer.toByteArray(4) is the Layer Address, made of 4 Bytes, same for all the others toByte
         for (i in 0..3) address[i] = layerAddress[i]
@@ -30,7 +44,7 @@ class Address : AddressInterface {
      *
      * @param tree the tree address
      */
-    override fun setTreeAddress(tree: UInt) {
+    fun setTreeAddress(tree: UInt) {
         val treeAddress = tree.toByteArray(12)
         for (i in 4..15) address[i] = treeAddress[i - 4]
 
@@ -47,17 +61,19 @@ class Address : AddressInterface {
      * - 5u -> WOTS_PRF
      * - 6u -> FORS_PRF
      */
-    override fun setTypeAndClear(type: UInt) {
+    fun setTypeAndClear(type: UInt) {
+        require(type <= 6u && type != 0u) { "type parameter should be in a range {1u, 6u}" }
         val treeAddress = type.toByteArray(4)
         for (i in 16..19) address[i] = treeAddress[i - 16]
         for (i in 20 until 32) address[i] = 0.toUByte()
     }
+
     /**
      * Sets the Key Pair Addresses in the Address Data Structure
      *
      * @param i the key pair address
      */
-    override fun setKeyPairAddress(i: UInt) {
+    fun setKeyPairAddress(i: UInt) {
         val keyPairAddress = i.toByteArray(4)
         for (i in 20..23) address[i] = keyPairAddress[i - 20]
     }
@@ -67,17 +83,18 @@ class Address : AddressInterface {
      *
      * @param chain the chain address
      */
-    override fun setChainAddress(chain: UInt) {
+    fun setChainAddress(chain: UInt) {
         val chainAddress = chain.toByteArray(4)
-        for (i in 24..27) address[i] = chainAddress[i-24]
+        for (i in 24..27) address[i] = chainAddress[i - 24]
     }
+
     /**
      *
      * Sets the Tree's Height in the Address Data Structure
      *
      * @param treeHeight the tree's height
      */
-    override fun setTreeHeight(treeHeight: UInt) {
+    fun setTreeHeight(treeHeight: UInt) {
         setChainAddress(treeHeight)
     }
 
@@ -86,9 +103,9 @@ class Address : AddressInterface {
      *
      * @param hashAddress the hash address
      */
-    override fun setHashAddress(hashAddress: UInt) {
+    fun setHashAddress(hashAddress: UInt) {
         val chainAddress = hashAddress.toByteArray(4)
-        for (i in 28..31) address[i] = chainAddress[i-28]
+        for (i in 28..31) address[i] = chainAddress[i - 28]
     }
 
     /**
@@ -96,7 +113,7 @@ class Address : AddressInterface {
      *
      * @param treeIndex the tree Index
      */
-    override fun setTreeIndex(treeIndex: UInt) {
+    fun setTreeIndex(treeIndex: UInt) {
         setHashAddress(treeIndex)
     }
 
@@ -104,8 +121,8 @@ class Address : AddressInterface {
      * Getter function for the KeyPair Address
      * @return the KeyPair Address
      */
-    override fun getKeyPairAddress(): UInt {
-        return  address.copyOfRange(20, 24).toInt()
+    fun getKeyPairAddress(): UInt {
+        return address.copyOfRange(20, 24).toInt()
     }
 
     /**
@@ -113,7 +130,7 @@ class Address : AddressInterface {
      *
      * @return The Tree's index
      */
-    override fun getTreeIndex(): UInt {
-        return  address.copyOfRange(28, 32).toInt()
+    fun getTreeIndex(): UInt {
+        return address.copyOfRange(28, 32).toInt()
     }
 }

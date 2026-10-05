@@ -1,5 +1,6 @@
-package org.example.utils.functions
+package org.example.wots
 
+import org.example.utils.functions.log2W
 import kotlin.math.pow
 
 /**
