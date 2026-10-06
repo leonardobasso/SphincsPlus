@@ -34,18 +34,3 @@ fun UByteArray.toInt(): UInt {
     }
     return out
 }
-
-
-//-----------------------------------------------------------
-@OptIn(ExperimentalUnsignedTypes::class)
-fun main() {
-
-    println(1u.toByteArray( 4).contentToString())
-    println(555u.toByteArray(4).contentToString())
-    println(9999999u.toByteArray(5).contentToString())
-    println("*toInt:*")
-    println(ubyteArrayOf(1u).toInt())
-    println(ubyteArrayOf(0u, 0u, 2u, 43u).toInt())
-    println(ubyteArrayOf(0u, 152u, 150u, 127u).toInt())
-
-}
