@@ -31,7 +31,7 @@ fun genLen1(length: Int, base: Int): Int {
 fun genLen2(length: Int, base: Int): Int {
     val logW = log2W(base)
     val w = 2.0.pow(logW) // Floating point!!!
-    val len1 = genLen1(length, logW)
+    val len1 = genLen1(length, base)
     val maxCheckSum = len1 * (w - 1)
 
     var len2 = 1

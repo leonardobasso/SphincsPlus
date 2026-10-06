@@ -33,7 +33,7 @@ class WOTS(val n: Int, val w: UInt) {
         if ((index + steps) > (w - 1u)) throw IndexOutOfBoundsException("index + steps is > w - 1")
 
         var temp = msg
-        for (j in index until index + steps - 1u) {
+        for (j in index until index + steps) {
             address.setHashAddress(j)
             temp = hashF(PKSeed, address, temp)
         }
@@ -129,12 +129,13 @@ class WOTS(val n: Int, val w: UInt) {
         val temp = Array(len) { ubyteArrayOf() }
 
 
-        for (i in 0 until len) {
+        for (i in 0 until len1) {
             checksum = checksum + w - 1u - msg[i]
         }
-        val lgW = log2W(w)
 
+        val lgW = log2W(w)
         checksum = checksum shl (8 - ((len2 * lgW) % 8))
+
         val len2Bytes = ceil((len2.toDouble() * lgW) % 8)
         msg = msg.plus(baseW(checksum.toByteArray(len2Bytes.toInt()), w, len2))
 
