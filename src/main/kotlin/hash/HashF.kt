@@ -32,3 +32,8 @@ fun hashTl(PKSeed: UByteArray, address: Address, msg: Array<UByteArray>): UByteA
     return ubyteArrayOf()
 
 }
+
+@OptIn(ExperimentalUnsignedTypes::class)
+fun hashH(PKSeed: UByteArray, asddress: Address, msg: UByteArray): UByteArray {
+    return ubyteArrayOf()
+}

@@ -1,7 +1,7 @@
 package org.example.utils.classes
 
-import org.example.utils.functions.toByteArray
-import org.example.utils.functions.toInt
+import org.example.utils.functions.toUByteArray
+import org.example.utils.functions.toUInt
 
 /**
  * Implementation of AddressInterface
@@ -35,7 +35,7 @@ class Address {
      */
     fun setLayerAddress(layer: UInt) {
         val layerAddress =
-            layer.toByteArray(4) // layer.toByteArray(4) is the Layer Address, made of 4 Bytes, same for all the others toByte
+            layer.toUByteArray(4) // layer.toByteArray(4) is the Layer Address, made of 4 Bytes, same for all the others toByte
         for (i in 0..3) address[i] = layerAddress[i]
     }
 
@@ -45,26 +45,28 @@ class Address {
      * @param tree the tree address
      */
     fun setTreeAddress(tree: UInt) {
-        val treeAddress = tree.toByteArray(12)
+        val treeAddress = tree.toUByteArray(12)
         for (i in 4..15) address[i] = treeAddress[i - 4]
 
     }
 
     /**
-     * Sets the Tree Addresses in the Address Data Structure and clears all the following Bytes
+     * Sets the Type in the Address Data Structure and clears all the following Bytes.
      *
-     * @param type the type of the address, it is *(SHL-SDA 4.2)*:
+     * Complies with SPHINCS+ v3 specification (Section 2.7.3, Figure 2).
+     *
+     * @param type the type of the address, it is:
+     * - 0u -> WOTS_HASH
      * - 1u -> WOTS_PK
      * - 2u -> TREE
      * - 3u -> FORS_TREE
      * - 4u -> FORS_ROOTS
-     * - 5u -> WOTS_PRF
-     * - 6u -> FORS_PRF
      */
     fun setTypeAndClear(type: UInt) {
-        require(type <= 6u && type != 0u) { "type parameter should be in a range {1u, 6u}" }
-        val treeAddress = type.toByteArray(4)
-        for (i in 16..19) address[i] = treeAddress[i - 16]
+        require(type <= 4u) { "type parameter should be in a range {0u, 4u} instead is $type" }
+
+        val typeAddress = type.toUByteArray(4)
+        for (i in 16..19) address[i] = typeAddress[i - 16]
         for (i in 20 until 32) address[i] = 0.toUByte()
     }
 
@@ -74,7 +76,7 @@ class Address {
      * @param i the key pair address
      */
     fun setKeyPairAddress(i: UInt) {
-        val keyPairAddress = i.toByteArray(4)
+        val keyPairAddress = i.toUByteArray(4)
         for (i in 20..23) address[i] = keyPairAddress[i - 20]
     }
 
@@ -84,7 +86,7 @@ class Address {
      * @param chain the chain address
      */
     fun setChainAddress(chain: UInt) {
-        val chainAddress = chain.toByteArray(4)
+        val chainAddress = chain.toUByteArray(4)
         for (i in 24..27) address[i] = chainAddress[i - 24]
     }
 
@@ -104,7 +106,7 @@ class Address {
      * @param hashAddress the hash address
      */
     fun setHashAddress(hashAddress: UInt) {
-        val chainAddress = hashAddress.toByteArray(4)
+        val chainAddress = hashAddress.toUByteArray(4)
         for (i in 28..31) address[i] = chainAddress[i - 28]
     }
 
@@ -122,7 +124,7 @@ class Address {
      * @return the KeyPair Address
      */
     fun getKeyPairAddress(): UInt {
-        return address.copyOfRange(20, 24).toInt()
+        return address.copyOfRange(20, 24).toUInt()
     }
 
     /**
@@ -131,6 +133,10 @@ class Address {
      * @return The Tree's index
      */
     fun getTreeIndex(): UInt {
-        return address.copyOfRange(28, 32).toInt()
+        return address.copyOfRange(28, 32).toUInt()
+    }
+
+    fun getTreeHeight(): UInt {
+        return address.copyOfRange(24, 28).toUInt()
     }
 }

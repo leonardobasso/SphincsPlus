@@ -8,7 +8,7 @@ package org.example.utils.functions
  * @return the ByteArray representing the number given in input
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-fun UInt.toByteArray(length: Int): UByteArray {
+fun UInt.toUByteArray(length: Int): UByteArray {
     var total = this
     val out = UByteArray(length)
 
@@ -27,7 +27,7 @@ fun UInt.toByteArray(length: Int): UByteArray {
  * @return the integer representing hte ByteArray number
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-fun UByteArray.toInt(): UInt {
+fun UByteArray.toUInt(): UInt {
     var out = 0u
     for (i in this.indices){
         out = (256u * out + this[i])

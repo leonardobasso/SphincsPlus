@@ -6,7 +6,7 @@ import org.example.hash.hashTl
 import org.example.utils.classes.Address
 import org.example.utils.functions.baseW
 import org.example.utils.functions.log2W
-import org.example.utils.functions.toByteArray
+import org.example.utils.functions.toUByteArray
 import kotlin.math.ceil
 
 /**
@@ -98,7 +98,7 @@ class WOTS(val n: Int, val w: UInt) {
         }
 
         val len2Bytes = ceil((len2.toDouble() * lgW) % 8)
-        msg = msg.plus(baseW(checksum.toByteArray(len2Bytes.toInt()), w, len2))
+        msg = msg.plus(baseW(checksum.toUByteArray(len2Bytes.toInt()), w, len2))
 
         for (i in 0 until len) {
             address.setChainAddress(i.toUInt())
@@ -137,7 +137,7 @@ class WOTS(val n: Int, val w: UInt) {
         checksum = checksum shl (8 - ((len2 * lgW) % 8))
 
         val len2Bytes = ceil((len2.toDouble() * lgW) % 8)
-        msg = msg.plus(baseW(checksum.toByteArray(len2Bytes.toInt()), w, len2))
+        msg = msg.plus(baseW(checksum.toUByteArray(len2Bytes.toInt()), w, len2))
 
         for (i in 0 until len) {
             address.setChainAddress(i.toUInt())
