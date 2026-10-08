@@ -15,7 +15,7 @@ package org.example.utils.functions
 @OptIn(ExperimentalUnsignedTypes::class)
 fun truncate(byteArray: UByteArray, length: Int): UByteArray {
 
-    require(length / 8 <= byteArray.size) { "lenght exceeds the byteArray size (lenght / 8 > byteArray.size)" }
+    require(length / 8 <= byteArray.size) { "length exceeds the byteArray size (length / 8 > byteArray.size)" }
 
     return byteArray.copyOfRange(0, length / 8)
 }

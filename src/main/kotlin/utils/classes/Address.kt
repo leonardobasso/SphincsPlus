@@ -101,6 +101,16 @@ class Address {
     }
 
     /**
+     *
+     * Sets the Tree's Height in the Address Data Structure
+     *
+     * @param treeHeight the tree's height
+     */
+    fun setTreeHeight(treeHeight: Int) {
+        setChainAddress(treeHeight.toUInt())
+    }
+
+    /**
      * Sets the Hash Addresses in the Address Data Structure
      *
      * @param hashAddress the hash address
@@ -135,7 +145,11 @@ class Address {
     fun getTreeIndex(): UInt {
         return address.copyOfRange(28, 32).toUInt()
     }
-
+    /**
+     * Getter function for the Merkle's HyperTree Height
+     *
+     * @return The Tree's height
+     */
     fun getTreeHeight(): UInt {
         return address.copyOfRange(24, 28).toUInt()
     }

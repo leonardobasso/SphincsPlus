@@ -16,7 +16,7 @@ fun baseW(byteArray: UByteArray, base: UInt, length: Int): UIntArray {
 
     val log = log2W(base)
 
-    require(length <= (8 * byteArray.size) / log) { "lenght must to be <= ${8 * byteArray.size / log}, instead is $length" }
+    require(length <= (8 * byteArray.size) / log) { "length must to be <= ${8 * byteArray.size / log}, instead is $length" }
 
     var input = 0
     var total = 0u
