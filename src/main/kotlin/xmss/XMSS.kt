@@ -16,6 +16,8 @@ import kotlin.collections.plus
  * Code from Chapter 5 od SLH-DSA and Chapter 3 of Sphincs v3
  *
  * @see org.example.wots.WOTS
+ * @see XMSSNode
+ * @see XMSSSignature
  */
 @OptIn(ExperimentalUnsignedTypes::class)
 class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS) {
