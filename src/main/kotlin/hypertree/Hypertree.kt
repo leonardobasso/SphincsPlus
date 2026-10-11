@@ -69,13 +69,12 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
 
         var root = xmss.pkFromSign(indexLeaf, tempSign, message, PKSeed, address)
 
-        var currentIndexLeaf: UInt
-        var currentIndexTree: UInt
+        var currentIndexLeaf= indexLeaf
+        var currentIndexTree = indexTree
 
         for (i in 1u until layers) {
-            //TODO finish this implementation, currentindex... are wrongly implemented, I have to understand what is ment by tge pseudocode text
-            currentIndexLeaf = height / layers // idx_leaf = (h / d) least significant bits of idx_tree;
-            currentIndexTree = height - (i + 1u) * height / layers // idx_tree = (h - (j + 1) * (h / d)) most significant bits of idx_tree;
+            currentIndexLeaf = currentIndexTree % (1u shl (height / layers).toInt())
+            currentIndexTree = currentIndexTree shr ((height / layers).toInt())
 
             address.setLayerAddress(i)
             address.setTreeAddress(currentIndexTree)
@@ -114,27 +113,21 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
         address.setLayerAddress(0u)
         address.setTreeAddress(indexTree)
         var node = xmss.pkFromSign(
-            indexLeaf,
-            sign[0], // sign[i] is SIG_tmp in the pseudocode on the doc
-            message,
-            PKSeed,
-            address
+            indexLeaf, sign[0], // sign[i] is SIG_tmp in the pseudocode on the doc
+            message, PKSeed, address
         )
 
+        var tempIndexLeaf = indexLeaf
+        var tempIndexTree = indexTree
         for (i in 1u until layers) {
-            val tempIndexLeaf = height / layers
-            val tempIndexTree = height - (i + 1u) * (height / layers)
+            tempIndexLeaf = tempIndexTree % (1u shl (height / layers).toInt())
+            tempIndexTree = tempIndexTree shr ((height / layers).toInt())
             address.setLayerAddress(i)
             address.setTreeAddress(tempIndexTree)
             node = xmss.pkFromSign(tempIndexLeaf, sign[i.toInt()], node, PKSeed, address)
         }
 
-
-        return if (node.contentEquals(PKHyperTree)) {
-            true
-        } else {
-            false
-        }
+        return node.contentEquals(PKHyperTree)
     }
 
 }
