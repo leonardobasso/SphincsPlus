@@ -24,11 +24,11 @@ class WOTS(val n: Int, val w: UInt) {
         require(w == 4u || w == 16u || w == 256u) { "base must be 4, 16 or 256, instead is $w" }
     }
 
-    val len: Int = genLen(n, w.toInt())
-    val len1: Int = genLen1(n, w.toInt())
-    val len2: Int = genLen2(n, w.toInt())
+    private val len: Int = genLen(n, w.toInt())
+    private val len1: Int = genLen1(n, w.toInt())
+    private val len2: Int = genLen2(n, w.toInt())
 
-    fun chain(msg: UByteArray, index: UInt, steps: UInt, PKSeed: UByteArray, address: Address): UByteArray {
+    private fun chain(msg: UByteArray, index: UInt, steps: UInt, PKSeed: UByteArray, address: Address): UByteArray {
         if (steps == 0u) return msg
         if ((index + steps) > (w - 1u)) throw IndexOutOfBoundsException("index + steps is > w - 1")
 

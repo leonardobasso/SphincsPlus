@@ -9,7 +9,10 @@ import org.example.xmss.XMSSSignature
  * of XMSS instances. A HT is a tree of several layers of XMSS trees. The trees on top and
  * intermediate layers are used to sign the public keys, i.e., the root nodes, of the XMSS trees on
  * the respective next layer below. Trees on the lowest layer are used to sign the actual messages,
- * which are FORS public keys in SPHINCS+. All XMSS trees in HT have equal height. *(Sphincs+ v3 pp 4.2*
+ * which are FORS public keys in SPHINCS+. All XMSS trees in HT have equal height. *(Sphincs+ v3 pp 4.2)*
+ *
+ * The SPHINCS+ hypertree HT is not used to sign the actual messages but the public keys of
+ * FORS instances which in turn are used to sign message digests. *(Sphincs+ v3 pp 5)*
  *
  * @param height the height of the Hypertree
  * @param layers the layers of the hypertree (the number of trees in the Hypertree)
@@ -17,11 +20,12 @@ import org.example.xmss.XMSSSignature
  * @param xmss an instance of an XMSS scheme
  *
  * @see org.example.xmss.XMSS
+ * @see org.example.fors.FORS
  */
 @OptIn(ExperimentalUnsignedTypes::class)
 class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
 
-    val singleHeight = height / layers
+    private val singleTreeHeight = (height / layers).toInt()
 
     init {
         require(w == 4u || w == 16u || w == 256u) { "base must be 4, 16 or 256, instead is $w" }
@@ -73,8 +77,8 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
         var currentIndexTree = indexTree
 
         for (i in 1u until layers) {
-            currentIndexLeaf = currentIndexTree % (1u shl (height / layers).toInt())
-            currentIndexTree = currentIndexTree shr ((height / layers).toInt())
+            currentIndexLeaf = currentIndexTree % (1u shl singleTreeHeight)
+            currentIndexTree = currentIndexTree shr singleTreeHeight
 
             address.setLayerAddress(i)
             address.setTreeAddress(currentIndexTree)
@@ -120,8 +124,8 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
         var tempIndexLeaf = indexLeaf
         var tempIndexTree = indexTree
         for (i in 1u until layers) {
-            tempIndexLeaf = tempIndexTree % (1u shl (height / layers).toInt())
-            tempIndexTree = tempIndexTree shr ((height / layers).toInt())
+            tempIndexLeaf = tempIndexTree % (1u shl singleTreeHeight)
+            tempIndexTree = tempIndexTree shr singleTreeHeight
             address.setLayerAddress(i)
             address.setTreeAddress(tempIndexTree)
             node = xmss.pkFromSign(tempIndexLeaf, sign[i.toInt()], node, PKSeed, address)

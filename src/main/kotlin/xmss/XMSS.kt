@@ -16,6 +16,7 @@ import kotlin.collections.plus
  * Code from Chapter 5 od SLH-DSA and Chapter 3 of Sphincs v3
  *
  * @see org.example.wots.WOTS
+ * @see org.example.hypertree.Hypertree
  * @see XMSSNode
  * @see XMSSSignature
  */
@@ -34,7 +35,7 @@ class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS) {
      *
      * @return the value of the radix of the tree
      */
-    fun treehash(SKSeed: UByteArray, PKSeed: UByteArray, index: UInt, targetHeight: Int, address: Address): UByteArray {
+    private fun treehash(SKSeed: UByteArray, PKSeed: UByteArray, index: UInt, targetHeight: Int, address: Address): UByteArray {
 
         val iter = 1u shl targetHeight
         require(index % iter == 0u) { "index % (1u shl targetHeight) is ${index % iter}, it should be 0" }
