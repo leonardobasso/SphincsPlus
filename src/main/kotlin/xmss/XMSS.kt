@@ -2,7 +2,7 @@ package org.example.xmss
 
 import org.example.hash.hashH
 import org.example.utils.classes.Address
-import org.example.utils.classes.XMSSNode
+import org.example.utils.classes.Node
 import org.example.wots.WOTS
 import kotlin.collections.plus
 
@@ -17,7 +17,7 @@ import kotlin.collections.plus
  *
  * @see org.example.wots.WOTS
  * @see org.example.hypertree.Hypertree
- * @see XMSSNode
+ * @see Node
  * @see XMSSSignature
  */
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -40,7 +40,7 @@ class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS) {
         val iter = 1u shl targetHeight
         require(index % iter == 0u) { "index % (1u shl targetHeight) is ${index % iter}, it should be 0" }
 
-        val stack = mutableListOf<XMSSNode>()
+        val stack = ArrayDeque<Node>()
 
         for (i in 0u until iter) {
             address.setTypeAndClear(0u)
@@ -57,7 +57,7 @@ class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS) {
                 node = hashH(PKSeed, address, (stack.removeLast().value.plus(node)))
                 address.setTreeHeight(address.getTreeHeight() + 1u)
             }
-            stack.add(XMSSNode(node, address.getTreeHeight()))
+            stack.add(Node(node, address.getTreeHeight()))
         }
         return stack.removeLast().value
     }
