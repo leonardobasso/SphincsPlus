@@ -183,7 +183,7 @@ class FORS(val k: UInt, val a: UInt, val n: UInt) {
     ): UByteArray {
 
         val index = messageToIndices(message)
-        val node = Array(2) { ubyteArrayOf() }
+        val node = Array(2) { ubyteArrayOf() } // probably not needed an array, see after testing
         val root =Array(k.toInt()) { ubyteArrayOf() }
 
 
@@ -192,7 +192,7 @@ class FORS(val k: UInt, val a: UInt, val n: UInt) {
 
             val sk = signature[i].leaf
             address.setTreeHeight(0u)
-            address.setTreeIndex(ui * t)
+            address.setTreeIndex(ui * t + index[i])
             node[0] = hashF(PKSeed, address, sk)
 
             val auth = signature[i].auth
