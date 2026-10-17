@@ -1,8 +1,6 @@
 package org.example.wots
 
-import org.example.hash.hashF
-import org.example.hash.hashPRF
-import org.example.hash.hashTl
+import org.example.hash.HashInterface
 import org.example.utils.classes.Address
 import org.example.utils.functions.baseW
 import org.example.utils.functions.log2W
@@ -18,11 +16,15 @@ import kotlin.math.ceil
  * @param w the Winternitz parameter; it is an element of the set {4,16,256}. *(Sphincs v3, p3.1)*
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-class WOTS(val n: Int, val w: UInt) {
+class WOTS(val n: Int, val w: UInt, val hash: HashInterface) {
 
     init {
         require(w == 4u || w == 16u || w == 256u) { "base must be 4, 16 or 256, instead is $w" }
     }
+
+    val hashF = hash::hashF
+    val hashTl = hash::hashTl
+    val hashPRF = hash::hashPRF
 
     private val len: Int = genLen(n, w.toInt())
     private val len1: Int = genLen1(n, w.toInt())

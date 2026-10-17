@@ -11,5 +11,4 @@ package org.example.fors
  */
 
 @OptIn(ExperimentalUnsignedTypes::class)
-class FORSElement(val leaf: UByteArray, val auth: Array<UByteArray>) {
-}
+class FORSElement(val leaf: UByteArray, val auth: Array<UByteArray>)

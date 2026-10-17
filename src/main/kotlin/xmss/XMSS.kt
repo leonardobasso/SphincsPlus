@@ -1,6 +1,6 @@
 package org.example.xmss
 
-import org.example.hash.hashH
+import org.example.hash.HashInterface
 import org.example.utils.classes.Address
 import org.example.utils.classes.Node
 import org.example.wots.WOTS
@@ -21,7 +21,9 @@ import kotlin.collections.plus
  * @see XMSSSignature
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS) {
+class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS, val hash: HashInterface) {
+
+    val hashH = hash::hashH
 
     /**
      * The treehash algorithm returns the root node of a tree

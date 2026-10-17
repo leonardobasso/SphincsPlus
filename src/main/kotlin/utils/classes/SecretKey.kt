@@ -11,6 +11,4 @@ package org.example.utils.classes
 @OptIn(ExperimentalUnsignedTypes::class)
 class SecretKey(
     val seed: UByteArray, val prf: UByteArray
-) {
-
-}
+)

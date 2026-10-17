@@ -1,12 +1,9 @@
 package org.example.fors
 
-import org.example.hash.hashF
-import org.example.hash.hashH
-import org.example.hash.hashPRF
-import org.example.hash.hashTl
+
+import org.example.hash.HashInterface
 import org.example.utils.classes.Address
 import org.example.utils.classes.Node
-import org.example.utils.functions.baseW
 
 /**
  * FORS [..] is a few-time signature scheme
@@ -20,7 +17,12 @@ import org.example.utils.functions.baseW
  * @see org.example.hypertree.Hypertree
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-class FORS(val k: UInt, val a: UInt, val n: UInt) {
+class FORS(val k: UInt, val a: UInt, val n: UInt, val hash: HashInterface) {
+
+    val hashPRF = hash::hashPRF
+    val hashF = hash::hashF
+    val hashH = hash::hashH
+    val hashTl = hash::hashTl
 
     val t = 1u shl a.toInt()
     val stringLenght = k * t

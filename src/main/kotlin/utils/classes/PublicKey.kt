@@ -12,7 +12,4 @@ package org.example.utils.classes
 @OptIn(ExperimentalUnsignedTypes::class)
 class PublicKey(
     val seed: UByteArray, val root: UByteArray
-) {
-
-
-}
+)
