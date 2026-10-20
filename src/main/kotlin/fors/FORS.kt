@@ -17,15 +17,14 @@ import org.example.utils.classes.Node
  * @see org.example.hypertree.Hypertree
  */
 @OptIn(ExperimentalUnsignedTypes::class)
-class FORS(val k: UInt, val a: UInt, val n: UInt, val hash: HashInterface) {
+class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
 
-    val hashPRF = hash::hashPRF
-    val hashF = hash::hashF
-    val hashH = hash::hashH
-    val hashTl = hash::hashTl
+    private val hashPRF = hash::hashPRF
+    private val hashF = hash::hashF
+    private val hashH = hash::hashH
+    private val hashTl = hash::hashTl
 
-    val t = 1u shl a.toInt()
-    val stringLenght = k * t
+    val t = 1u shl a
 
     /**
      * Generates the Secret Key for FORS
@@ -101,7 +100,7 @@ class FORS(val k: UInt, val a: UInt, val n: UInt, val hash: HashInterface) {
 
         for (i in 0 until k.toInt()) {
             out[i] = 0u
-            for (j in 0 until a.toInt()) {
+            for (j in 0 until a) {
                 out[i] = out[i] xor (((message[offset shr 3].toUInt() shr (offset and 0x7)) and 1u) shl j)
                 offset++
             }
@@ -125,7 +124,7 @@ class FORS(val k: UInt, val a: UInt, val n: UInt, val hash: HashInterface) {
         val root = Array(k.toInt()) { ubyteArrayOf() }
 
         for (i in 0u until k) {
-            root[i.toInt()] = treehash(SKSeed, PKSeed, i * t, a, address)
+            root[i.toInt()] = treehash(SKSeed, PKSeed, i * t, a.toUInt(), address)
         }
 
         pkAddress.setTypeAndClear(4u)
@@ -163,13 +162,13 @@ class FORS(val k: UInt, val a: UInt, val n: UInt, val hash: HashInterface) {
 
         for (i in 0 until k.toInt()) {
             val ui = i.toUInt()
-            val auth = Array(a.toInt()) { ubyteArrayOf() }
+            val auth = Array(a) { ubyteArrayOf() }
 
             treeAddress.setTreeHeight(0u)
             treeAddress.setTreeIndex(ui * t + index[i])
             val leaf = hashPRF(SKSeed, treeAddress)
 
-            for (j in 0 until a.toInt()) {
+            for (j in 0 until a) {
                 val s = (index[i] / (1u shl j)) xor 1u
                 auth[j] = treehash(
                     SKSeed, PKSeed, ui * t + s * (1u shl j), j.toUInt(), treeAddress
@@ -186,7 +185,7 @@ class FORS(val k: UInt, val a: UInt, val n: UInt, val hash: HashInterface) {
 
         val index = messageToIndices(message)
         val node = Array(2) { ubyteArrayOf() } // probably not needed an array, see after testing
-        val root =Array(k.toInt()) { ubyteArrayOf() }
+        val root = Array(k.toInt()) { ubyteArrayOf() }
 
 
         for (i in 0 until k.toInt()) {
@@ -200,13 +199,13 @@ class FORS(val k: UInt, val a: UInt, val n: UInt, val hash: HashInterface) {
             val auth = signature[i].auth
             address.setTreeIndex(ui * t + index[i])
 
-            for (j in 0 until a.toInt()) {
+            for (j in 0 until a) {
                 address.setTreeHeight(j.toUInt() + 1u)
                 if ((index[i] / (1u shl j) % 2u) == 0u) {
                     address.setTreeIndex(address.getTreeIndex() / 2u)
                     node[1] = hashH(PKSeed, address, node[0].plus(auth[j]))
                 } else {
-                    address.setTreeIndex((address.getTreeIndex() -1u ) / 2u)
+                    address.setTreeIndex((address.getTreeIndex() - 1u) / 2u)
                     node[1] = hashH(PKSeed, address, auth[j].plus(node[0]))
                 }
                 node[0] = node[1]

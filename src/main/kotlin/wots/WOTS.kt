@@ -22,9 +22,9 @@ class WOTS(val n: Int, val w: UInt, val hash: HashInterface) {
         require(w == 4u || w == 16u || w == 256u) { "base must be 4, 16 or 256, instead is $w" }
     }
 
-    val hashF = hash::hashF
-    val hashTl = hash::hashTl
-    val hashPRF = hash::hashPRF
+    private val hashF = hash::hashF
+    private val hashTl = hash::hashTl
+    private val hashPRF = hash::hashPRF
 
     private val len: Int = genLen(n, w.toInt())
     private val len1: Int = genLen1(n, w.toInt())

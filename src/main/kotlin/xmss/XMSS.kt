@@ -23,7 +23,7 @@ import kotlin.collections.plus
 @OptIn(ExperimentalUnsignedTypes::class)
 class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS, val hash: HashInterface) {
 
-    val hashH = hash::hashH
+    private val hashH = hash::hashH
 
     /**
      * The treehash algorithm returns the root node of a tree

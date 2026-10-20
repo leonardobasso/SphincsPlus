@@ -110,7 +110,7 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
         PKSeed: UByteArray,
         indexTree: UInt,
         indexLeaf: UInt,
-        PKHyperTree: UByteArray
+        PKHyperTree: UByteArray,
     ): Boolean {
         val address = Address()
 

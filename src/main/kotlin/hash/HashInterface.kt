@@ -1,6 +1,7 @@
 package org.example.hash
 
 import org.example.utils.classes.Address
+import org.example.utils.classes.PublicKey
 
 interface HashInterface {
     /**
@@ -32,4 +33,10 @@ interface HashInterface {
      */
     @OptIn(ExperimentalUnsignedTypes::class)
     fun hashH(PKSeed: UByteArray, asddress: Address, msg: UByteArray): UByteArray
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    fun hashPrfMsg(PkPrf: UByteArray, opt: UByteArray, msg: UByteArray): UByteArray
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    fun hashHMsg(r: UByteArray, publicKey: PublicKey, message: UByteArray): UByteArray
 }
