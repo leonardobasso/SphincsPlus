@@ -32,7 +32,7 @@ interface HashInterface {
      * Hmsg(R,PK,M)
      */
     @OptIn(ExperimentalUnsignedTypes::class)
-    fun hashH(PKSeed: UByteArray, asddress: Address, msg: UByteArray): UByteArray
+    fun hashH(PKSeed: UByteArray, address: Address, msg: UByteArray): UByteArray
 
     @OptIn(ExperimentalUnsignedTypes::class)
     fun hashPrfMsg(PkPrf: UByteArray, opt: UByteArray, msg: UByteArray): UByteArray
