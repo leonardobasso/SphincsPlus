@@ -1,5 +1,9 @@
 package org.example.hash
 
+import org.bouncycastle.crypto.digests.SHA256Digest
+import org.bouncycastle.crypto.generators.MGF1BytesGenerator
+import org.bouncycastle.crypto.params.MGFParameters
+import org.example.hash.update
 import org.example.utils.classes.Address
 import org.example.utils.classes.PublicKey
 import java.security.MessageDigest
@@ -7,8 +11,17 @@ import javax.crypto.Mac
 import javax.crypto.Mac.getInstance
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * Implementation of SHA-256 using the parameters specified in Sphincs+ v3 pp 7.2.2.
+ */
 @OptIn(ExperimentalUnsignedTypes::class)
-class Sha256(val n: Int) : HashInterface {
+class Sha256(
+    val n: Int,
+    val height: Int,
+    val layers: Int,
+    val k: Int,
+    val a: Int,
+) : HashInterface {
 
     val md = MessageDigest.getInstance("SHA-256")
     val mac = getInstance("HmacSHA256")
@@ -88,7 +101,14 @@ class Sha256(val n: Int) : HashInterface {
         md.update(publicKey.root)
         md.update(message)
 
-        return md.digest().toUByteArray()
+        val mgf = MGF1BytesGenerator(SHA256Digest())
+        val len = ((k * a + 7) / 8) + ((height - height / layers + 7) / 8) + ((height / layers + 7) / 8)
+        val out = ByteArray(len)
+
+        mgf.init(MGFParameters(md.digest()))
+        mgf.generateBytes(out, 0, len)
+
+        return out.toUByteArray()
 
     }
 }

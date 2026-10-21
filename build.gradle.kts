@@ -12,7 +12,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.8.1")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.86")
 }
 
 kotlin {
