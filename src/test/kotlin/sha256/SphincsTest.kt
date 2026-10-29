@@ -1,7 +1,13 @@
 package sha256
 
 import org.example.hash.Sha256
+import org.example.hypertree.Hypertree
 import org.example.sphincs.Sphincs
+import org.example.utils.classes.PublicKey
+import org.example.utils.classes.SecretKey
+import org.example.utils.functions.keyGen
+import org.example.wots.WOTS
+import org.example.xmss.XMSS
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 import kotlin.random.nextUBytes
@@ -21,12 +27,16 @@ class SphincsTest {
     val message = Random.nextUBytes(n)
 
     val sha = Sha256(n, height, layers, k, a)
+    val wots = WOTS(n, w.toUInt(), sha)
+    val xmss = XMSS(height / layers  , n.toUInt(), w.toUInt(), wots, sha)
+    val hyperTree = Hypertree(height.toUInt(), layers.toUInt(), w.toUInt(), xmss)
+
     val sphincs = Sphincs(n, w.toUInt(), height, layers, k, a, true, sha)
 
     @Test
-    fun `verify Sphincs - SHA256`() {
+    fun `verify Sphincs - Sha256`() {
 
-        val (pk, sk) = sphincs.keyGen(n)
+        val (pk, sk) = keyGen(n, hyperTree)
         val sign = sphincs.sign(message, sk, pk)
         val verify = sphincs.verify(message, pk, sign)
 

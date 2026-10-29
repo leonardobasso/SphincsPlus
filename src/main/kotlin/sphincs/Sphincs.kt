@@ -57,29 +57,6 @@ class Sphincs(
     private val hashHMsg = hashInterface::hashHMsg
     private val hashPRFmsg = hashInterface::hashPrfMsg
 
-    fun keyGen(bytes: Int): Pair<PublicKey, SecretKey> {
-
-        val sr = SecureRandom()
-
-        val skSeed = ByteArray(bytes)
-        val skPrf = ByteArray(bytes)
-
-        val pkSeed = ByteArray(bytes)
-
-        sr.nextBytes(skSeed)
-        sr.nextBytes(skPrf)
-        sr.nextBytes(pkSeed)
-
-        val uSkSeed = skSeed.toUByteArray()
-        val uSkPrf = skPrf.toUByteArray()
-        val uPkSeed = pkSeed.toUByteArray()
-
-        val uPkRoot = hypertree.pkGen(uSkSeed, uPkSeed)
-
-        return Pair(PublicKey(uPkSeed, uPkRoot), SecretKey(uSkSeed, uSkPrf))
-
-    }
-
     /**
      * Extract Digest parameters from the digest
      * @param digest the digest
