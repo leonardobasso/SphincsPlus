@@ -9,6 +9,7 @@ import org.example.utils.classes.SecretKey
 import org.example.utils.functions.toUInt
 import org.example.wots.WOTS
 import org.example.xmss.XMSS
+import java.security.SecureRandom
 import kotlin.random.Random
 import kotlin.random.nextUBytes
 
@@ -56,6 +57,28 @@ class Sphincs(
     private val hashHMsg = hashInterface::hashHMsg
     private val hashPRFmsg = hashInterface::hashPrfMsg
 
+    fun keyGen(bytes: Int): Pair<PublicKey, SecretKey> {
+
+        val sr = SecureRandom()
+
+        val skSeed = ByteArray(bytes)
+        val skPrf = ByteArray(bytes)
+
+        val pkSeed = ByteArray(bytes)
+
+        sr.nextBytes(skSeed)
+        sr.nextBytes(skPrf)
+        sr.nextBytes(pkSeed)
+
+        val uSkSeed = skSeed.toUByteArray()
+        val uSkPrf = skPrf.toUByteArray()
+        val uPkSeed = pkSeed.toUByteArray()
+
+        val uPkRoot = hypertree.pkGen(uSkSeed, uPkSeed)
+
+        return Pair(PublicKey(uPkSeed, uPkRoot), SecretKey(uSkSeed, uSkPrf))
+
+    }
 
     /**
      * Extract Digest parameters from the digest
@@ -105,8 +128,8 @@ class Sphincs(
         address.setTypeAndClear(3u)
         address.setKeyPairAddress(indexLeaf)
 
-        val forsSign = fors.sign(md, publicKey.seed, secretKey.seed, address)
-        val forsPK = fors.pkFromSign(forsSign, md, publicKey.seed, address)
+        val forsSign = fors.sign(md, publicKey.seed, secretKey.seed, address.copyOf())
+        val forsPK = fors.pkFromSign(forsSign, md, publicKey.seed, address.copyOf())
 
         address.setTypeAndClear(2u)
         val htSign = hypertree.sign(forsPK, secretKey.seed, publicKey.seed, indexTree, indexLeaf)
