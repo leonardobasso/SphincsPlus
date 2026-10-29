@@ -11,6 +11,7 @@ import org.example.xmss.XMSS
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 import kotlin.random.nextUBytes
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -38,9 +39,15 @@ class SphincsTest {
 
         val (pk, sk) = keyGen(n, hyperTree)
         val sign = sphincs.sign(message, sk, pk)
-        val verify = sphincs.verify(message, pk, sign)
 
-        assertTrue(verify, "verify is $verify")
+        assertTrue(sphincs.verify(message, pk, sign), "verify is false")
+
+        val fakeMessage = Random.nextUBytes(n)
+        val fakeSign = sphincs.sign(fakeMessage, sk, pk)
+
+        assertFalse(sphincs.verify(message, pk, fakeSign), "verify should be false, false sign")
+        assertFalse(sphincs.verify(fakeMessage, pk, sign), "verify should be false, false message")
+
     }
 
 }
