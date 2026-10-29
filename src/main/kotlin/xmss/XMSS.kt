@@ -12,6 +12,8 @@ import kotlin.collections.plus
  * @param height the height (number of levels - 1) of the tree. There are 2h′ leaves in the tree.  *(Sphincs v3, p4.1.1)*
  * @param length the length in bytes of messages as well as of each node. *(Sphincs v3, p4.1.1)*
  * @param w the Winternitz parameter as defined for WOTS+ *(Sphincs v3, p4.1.1)*
+ * @param wots a WOTS instance with the same w as XMASS
+ * @param hash the preferred hash algorithm
  *
  * Code from Chapter 5 od SLH-DSA and Chapter 3 of Sphincs v3
  *
@@ -102,7 +104,7 @@ class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS, val h
         val auth = Array(height) { ubyteArrayOf() }
         for (i in 0 until height) {
             val k = (index / (1u shl i)) xor 1u
-            auth[i] = treehash(SKSeed, PKSeed, k * (1u shl i), i, address)
+            auth[i] = treehash(SKSeed, PKSeed, k * (1u shl i), i, address.copyOf())
         }
         address.setTypeAndClear(0u)
         address.setKeyPairAddress(index)
@@ -141,10 +143,10 @@ class XMSS(val height: Int, val length: UInt, val w: UInt, val wots: WOTS, val h
             address.setTreeHeight(i + 1)
 
             if ((index / (1u shl i) % 2u) == 0u) {
-                address.setTreeHeight(address.getTreeHeight() / 2u)
+                address.setTreeIndex(address.getTreeIndex() / 2u)
                 node[1] = hashH(PKSeed, address, node[0].plus(auth[i]))
             } else {
-                address.setTreeHeight((address.getTreeHeight() - 1u) / 2u)
+                address.setTreeIndex((address.getTreeIndex() - 1u) / 2u)
                 node[1] = hashH(PKSeed, address, auth[i].plus(node[0]))
             }
             node[0] = node[1]

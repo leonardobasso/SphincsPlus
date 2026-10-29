@@ -13,6 +13,21 @@ import kotlin.random.Random
 import kotlin.random.nextUBytes
 
 @OptIn(ExperimentalUnsignedTypes::class)
+/**
+ * Sphincs+ Class
+ *
+ * @param n the security parameter in bytes
+ * @param w the Winternitz Parameter
+ * @param height the height of the hypertree.
+ * @param layers the number of layers in the hypertree.
+ * @param k the number of trees in FORS
+ * @param a t = 2^a is the number of elements per private key set, number of leaves per hash tree and upper bound on the index values.
+ * @param randomize if true, opt of PRF is randomized, else it's not
+ * @param hashInterface The hash function
+ *
+ * @see FORS
+ *
+ */
 class Sphincs(
     val n: Int,
     val w: UInt,

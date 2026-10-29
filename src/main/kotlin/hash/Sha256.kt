@@ -13,6 +13,12 @@ import javax.crypto.spec.SecretKeySpec
 
 /**
  * Implementation of SHA-256 using the parameters specified in Sphincs+ v3 pp 7.2.2.
+ *
+ * @param n the security parameter in bytes
+ * @param height the height of the hypertree.
+ * @param layers the number of layers in the hypertree.
+ * @param k the number of trees in FORS
+ * @param a t = 2^a is the number of elements per private key set, number of leaves per hash tree and upper bound on the index values.
  */
 @OptIn(ExperimentalUnsignedTypes::class)
 class Sha256(

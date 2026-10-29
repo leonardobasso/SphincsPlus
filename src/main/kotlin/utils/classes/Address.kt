@@ -4,7 +4,6 @@ import org.example.utils.functions.toUByteArray
 import org.example.utils.functions.toUInt
 
 /**
- * Implementation of AddressInterface
  *
  * Functions expressed in *paragraph 4.1, table 1 of the SLH-DSA documentation*
  *

@@ -83,7 +83,6 @@ class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
             stack.add(Node(node, address.getTreeHeight()))
         }
         return stack.removeLast().value
-
     }
 
     /**
@@ -119,16 +118,17 @@ class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
      * @return the Public Key
      */
     fun pkGen(SKSeed: UByteArray, PKSeed: UByteArray, address: Address): UByteArray {
-
-        val pkAddress = address.copyOf()
         val root = Array(k.toInt()) { ubyteArrayOf() }
 
+        address.setTypeAndClear(3u)
+
         for (i in 0u until k) {
-            root[i.toInt()] = treehash(SKSeed, PKSeed, i * t, a.toUInt(), address)
+            root[i.toInt()] = treehash(SKSeed, PKSeed, i * t, a.toUInt(), address.copyOf())
         }
 
+        val pkAddress = address.copyOf()
         pkAddress.setTypeAndClear(4u)
-        pkAddress.setKeyPairAddress(address.getTreeHeight())
+        pkAddress.setKeyPairAddress(address.getKeyPairAddress())
         return hashTl(PKSeed, pkAddress, root)
     }
 
@@ -148,75 +148,76 @@ class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
     fun sign(
         message: UByteArray, PKSeed: UByteArray, SKSeed: UByteArray, address: Address
     ): MutableList<FORSElement> {
-
         val index = messageToIndices(message)
-
         val signature = mutableListOf<FORSElement>()
-        val pkAddress = address.copyOf()
-        val treeAddress = address.copyOf()
 
-        treeAddress.setTypeAndClear(3u)
-        pkAddress.setTypeAndClear(4u)
-
-
+        address.setTypeAndClear(3u)
 
         for (i in 0 until k.toInt()) {
             val ui = i.toUInt()
             val auth = Array(a) { ubyteArrayOf() }
 
-            treeAddress.setTreeHeight(0u)
-            treeAddress.setTreeIndex(ui * t + index[i])
-            val leaf = hashPRF(SKSeed, treeAddress)
+            address.setTreeHeight(0u)
+            address.setTreeIndex(ui * t + index[i])
+            val leaf = hashPRF(SKSeed, address)
 
             for (j in 0 until a) {
                 val s = (index[i] / (1u shl j)) xor 1u
                 auth[j] = treehash(
-                    SKSeed, PKSeed, ui * t + s * (1u shl j), j.toUInt(), treeAddress
+                    SKSeed, PKSeed, ui * t + s * (1u shl j), j.toUInt(), address
                 )
             }
             signature.add(FORSElement(leaf, auth))
         }
         return signature
     }
-
+    /**
+     * Gets publci key from signature
+     *
+     * @param signature the FORS signature
+     * @param message the signed message
+     * @param PKSeed the private key's seed
+     * @param address a FORS Address
+     *
+     * @return the public key
+     */
     fun pkFromSign(
         signature: MutableList<FORSElement>, message: UByteArray, PKSeed: UByteArray, address: Address
     ): UByteArray {
-
         val index = messageToIndices(message)
-        val node = Array(2) { ubyteArrayOf() } // probably not needed an array, see after testing
+        var node: UByteArray
         val root = Array(k.toInt()) { ubyteArrayOf() }
 
-
-        for (i in 0 until k.toInt()) {
-            val ui = i.toUInt()
-
-            val sk = signature[i].leaf
-            address.setTreeHeight(0u)
-            address.setTreeIndex(ui * t + index[i])
-            node[0] = hashF(PKSeed, address, sk)
-
-            val auth = signature[i].auth
-            address.setTreeIndex(ui * t + index[i])
-
-            for (j in 0 until a) {
-                address.setTreeHeight(j.toUInt() + 1u)
-                if ((index[i] / (1u shl j) % 2u) == 0u) {
-                    address.setTreeIndex(address.getTreeIndex() / 2u)
-                    node[1] = hashH(PKSeed, address, node[0].plus(auth[j]))
-                } else {
-                    address.setTreeIndex((address.getTreeIndex() - 1u) / 2u)
-                    node[1] = hashH(PKSeed, address, auth[j].plus(node[0]))
-                }
-                node[0] = node[1]
-            }
-            root[i] = node[1]
-        }
+        val treeAddress = address.copyOf()
+        treeAddress.setTypeAndClear(3u)
 
         val forsAddress = address.copyOf()
         forsAddress.setTypeAndClear(4u)
-        forsAddress.setKeyPairAddress(address.getKeyPairAddress())
 
-        return hashTl(PKSeed, address, root)
+        for (i in 0 until k.toInt()) {
+            val ui = i.toUInt()
+            val sk = signature[i].leaf
+
+            treeAddress.setTreeHeight(0u)
+            treeAddress.setTreeIndex(ui * t + index[i])
+            node = hashF(PKSeed, treeAddress, sk)
+
+            val auth = signature[i].auth
+
+            for (j in 0 until a) {
+                treeAddress.setTreeHeight((j + 1).toUInt())
+                if ((index[i] / (1u shl j) % 2u) == 0u) {
+                    treeAddress.setTreeIndex(treeAddress.getTreeIndex() / 2u)
+                    node = hashH(PKSeed, treeAddress, node.plus(auth[j]))
+                } else {
+                    treeAddress.setTreeIndex((treeAddress.getTreeIndex() - 1u) / 2u)
+                    node = hashH(PKSeed, treeAddress, auth[j].plus(node))
+                }
+            }
+            root[i] = node
+        }
+
+        forsAddress.setKeyPairAddress(address.getKeyPairAddress())
+        return hashTl(PKSeed, forsAddress, root)
     }
 }
