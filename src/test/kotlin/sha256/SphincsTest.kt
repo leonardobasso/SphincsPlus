@@ -3,8 +3,6 @@ package sha256
 import org.example.hash.Sha256
 import org.example.hypertree.Hypertree
 import org.example.sphincs.Sphincs
-import org.example.utils.classes.PublicKey
-import org.example.utils.classes.SecretKey
 import org.example.utils.functions.keyGen
 import org.example.wots.WOTS
 import org.example.xmss.XMSS

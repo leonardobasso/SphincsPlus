@@ -50,6 +50,16 @@ class Address {
     }
 
     /**
+     * Sets the Tree Addresses in the Address Data Structure
+     *
+     * @param tree the tree address
+     */
+    fun setTreeAddress(tree: ULong) {
+        val treeAddress = tree.toUByteArray(12)
+        for (i in 4..15) address[i] = treeAddress[i - 4]
+    }
+
+    /**
      * Sets the Type in the Address Data Structure and clears all the following Bytes.
      *
      * Complies with SPHINCS+ v3 specification (Section 2.7.3, Figure 2).

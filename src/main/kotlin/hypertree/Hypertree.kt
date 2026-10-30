@@ -59,7 +59,7 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
      * @return the HyperTree's signature, an array of XMSS signatures
      */
     fun sign(
-        message: UByteArray, SKSeed: UByteArray, PKSeed: UByteArray, indexTree: UInt, indexLeaf: UInt
+        message: UByteArray, SKSeed: UByteArray, PKSeed: UByteArray, indexTree: ULong, indexLeaf: UInt
     ): MutableList<XMSSSignature> {
 
         val sign = mutableListOf<XMSSSignature>()
@@ -77,7 +77,7 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
         var currentIndexTree = indexTree
 
         for (i in 1u until layers) {
-            currentIndexLeaf = currentIndexTree % (1u shl singleTreeHeight)
+            currentIndexLeaf = (currentIndexTree % (1uL shl singleTreeHeight)).toUInt()
             currentIndexTree = currentIndexTree shr singleTreeHeight
 
             address.setLayerAddress(i)
@@ -108,7 +108,7 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
         message: UByteArray,
         sign: MutableList<XMSSSignature>,
         PKSeed: UByteArray,
-        indexTree: UInt,
+        indexTree: ULong,
         indexLeaf: UInt,
         PKHyperTree: UByteArray,
     ): Boolean {
@@ -124,7 +124,7 @@ class Hypertree(val height: UInt, val layers: UInt, w: UInt, val xmss: XMSS) {
         var tempIndexLeaf = indexLeaf
         var tempIndexTree = indexTree
         for (i in 1u until layers) {
-            tempIndexLeaf = tempIndexTree % (1u shl singleTreeHeight)
+            tempIndexLeaf = (tempIndexTree % (1uL shl singleTreeHeight)).toUInt()
             tempIndexTree = tempIndexTree shr singleTreeHeight
             address.setLayerAddress(i)
             address.setTreeAddress(tempIndexTree)

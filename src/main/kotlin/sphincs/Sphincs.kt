@@ -7,9 +7,9 @@ import org.example.utils.classes.Address
 import org.example.utils.classes.PublicKey
 import org.example.utils.classes.SecretKey
 import org.example.utils.functions.toUInt
+import org.example.utils.functions.toULong
 import org.example.wots.WOTS
 import org.example.xmss.XMSS
-import java.security.SecureRandom
 import kotlin.random.Random
 import kotlin.random.nextUBytes
 
@@ -63,7 +63,7 @@ class Sphincs(
      *
      * @return a truple <Message Digest, Index Tree, Index Leaf>
      */
-    private fun extractDigestFields(digest: UByteArray): Triple<UByteArray, UInt, UInt> {
+    private fun extractDigestFields(digest: UByteArray): Triple<UByteArray, ULong, UInt> {
         val indexTreeBits = height - (height / layers)
         val indexLeafBits = height / layers
 
@@ -72,7 +72,7 @@ class Sphincs(
         val indexLeafEnd = indexTreeEnd + (indexLeafBits + 7) / 8
 
         val md = digest.copyOfRange(0, mdBytes)
-        val indexTree = digest.copyOfRange(mdBytes, indexTreeEnd).toUInt() and ((1u shl indexTreeBits) - 1u)
+        val indexTree = digest.copyOfRange(mdBytes, indexTreeEnd).toULong() and (((1uL shl indexTreeBits) - 1uL))
         val indexLeaf = digest.copyOfRange(indexTreeEnd, indexLeafEnd).toUInt() and ((1u shl indexLeafBits) - 1u)
 
         return Triple(md, indexTree, indexLeaf)
