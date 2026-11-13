@@ -34,21 +34,3 @@ fun baseW(byteArray: UByteArray, base: UInt, length: Int): UIntArray {
     }
     return outputArray
 }
-
-
-//----------------------------------------------------------
-
-@OptIn(ExperimentalUnsignedTypes::class)
-fun main() {
-    val bs = ubyteArrayOf(49u, 68u, 22u, 6u, 52u, 85u)
-
-    val out1 = baseW(bs, 16u, 12)
-    val out2 = baseW(bs, 16u, 4)
-    val out3 = baseW(bs, 4u, 4)
-    val out4 = baseW(bs, 256u, 4)
-
-    println("out1 (base 16, length 8) is: ${out1.contentToString()}")
-    println("out2 (base 16, length 4) is: ${out2.contentToString()}")
-    println("out3 (base 4, length 4) is: ${out3.contentToString()}")
-    println("out4  (base 256, length 4) is: ${out4.contentToString()}")
-}

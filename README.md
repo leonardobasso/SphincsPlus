@@ -5,7 +5,10 @@ In the [Sphincs+ v3 doc](https://sphincs.org/resources.html) functions are "base
 This implementation uses the "base" approach, thus some functions may have some differences from the pseudocode
 of SLH-DSA
 
-## To run benchmarks
+### To run tests
+``` ./gradlew test```
+
+### To run benchmarks
 ```./gradlew benchmark```
 
 You can find the results in `SphincsPlus/build/reports/benchmarks/main/...`

@@ -5,7 +5,7 @@ import org.example.utils.classes.PublicKey
 
 /**
  * Interface for the hash functions used in Sphincs+
- * @see Sha256
+ * @see Sha256s
  */
 interface HashInterface {
     /**
