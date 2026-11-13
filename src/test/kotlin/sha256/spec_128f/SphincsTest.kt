@@ -1,4 +1,4 @@
-package sha256
+package sha256.spec_128f
 
 import org.example.hash.Sha256
 import org.example.hypertree.Hypertree
@@ -16,13 +16,12 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalUnsignedTypes::class)
 class SphincsTest {
 
-    //256s
-    val n = 32
+    val n = 16
     val w = 16
-    val height = 64
-    val layers = 8
-    val a = 14
-    val k = 22
+    val height = 66
+    val layers = 22
+    val a = 6
+    val k = 33
 
     val message = Random.nextUBytes(n)
 

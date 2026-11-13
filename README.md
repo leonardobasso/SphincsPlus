@@ -5,16 +5,7 @@ In the [Sphincs+ v3 doc](https://sphincs.org/resources.html) functions are "base
 This implementation uses the "base" approach, thus some functions may have some differences from the pseudocode
 of SLH-DSA
 
-## Implementation details
+## To run benchmarks
+```./gradlew benchmark```
 
-### Utility functions
-
-### Data Structures
-
-#### Address
-
-### WOTS+
-
-### XMSS
-
-...
+You can find the results in `SphincsPlus/build/reports/benchmarks/main/...`

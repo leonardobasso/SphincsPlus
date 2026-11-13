@@ -1,4 +1,4 @@
-package sha256
+package sha256.spec_245s
 
 import org.example.fors.FORS
 import org.example.hash.Sha256

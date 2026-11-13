@@ -17,6 +17,7 @@ class AddressTest {
             copy.address,
             "${addr.address.contentToString()} compared to ${copy.address.contentToString()}"
         )
+
         addr.setHashAddress(1u)
         assertFalse(
             addr.address.contentEquals(copy.address),
