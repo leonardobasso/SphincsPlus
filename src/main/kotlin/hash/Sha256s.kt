@@ -30,6 +30,7 @@ class Sha256s(
 
     private val md = MessageDigest.getInstance("SHA-256")
     private val mac = getInstance("HmacSHA256")
+    private val mgf = MGF1BytesGenerator(SHA256Digest())
 
     private val padding = UByteArray(64 - n)
 
@@ -106,7 +107,6 @@ class Sha256s(
         md.update(publicKey.root)
         md.update(message)
 
-        val mgf = MGF1BytesGenerator(SHA256Digest())
         val len = ((k * a + 7) / 8) + ((height - height / layers + 7) / 8) + ((height / layers + 7) / 8)
         val out = ByteArray(len)
 

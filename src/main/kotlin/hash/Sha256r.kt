@@ -31,16 +31,58 @@ class Sha256r(
     private val md = MessageDigest.getInstance("SHA-256")
     private val mac = getInstance("HmacSHA256")
     private val mgf = MGF1BytesGenerator(SHA256Digest())
+    private val len = ((k * a + 7) / 8) + ((height - height / layers + 7) / 8) + ((height / layers + 7) / 8)
+
 
     private val padding = UByteArray(64 - n)
 
+
+    /**
+     * Generates a mask from the Public Key's seed and the address
+     * @param PKSeed the public key's seed
+     * @param address the address
+     * @param size the mask size, it should be the same size of the message you want to mask
+     *
+     * @return the mask
+     */
+    private fun generateMask(PKSeed: UByteArray, address: Address, size: Int): ByteArray {
+        val mask = ByteArray(size)
+
+        mgf.init(MGFParameters((PKSeed + address.address).toByteArray()))
+        mgf.generateBytes(mask, 0, size)
+        return mask
+
+    }
+
+    /**
+     * Given a message and a mask of the same size, the messahe het masked
+     *
+     * @param message the message to mask
+     * @param mask the mask
+     *
+     * @return the masked message
+     */
+    private fun maskMessage(message: UByteArray, mask: ByteArray): ByteArray {
+        require(message.size == mask.size) { "Message and Mask should have the same size" }
+        return ByteArray(message.size) { i -> message[i].toByte() xor mask[i] }
+    }
+
+    /**
+     * Generates a mask from a Public Key's seed and an Address, then masks the message
+     *
+     * @param message the message to mask
+     * @param PKSeed the public key's seed
+     * @param address the address
+     *
+     * @return the masked message
+     */
     private fun maskMessage(message: UByteArray, PKSeed: UByteArray, address: Address): ByteArray {
         val mask = ByteArray(message.size)
 
         mgf.init(MGFParameters((PKSeed + address.address).toByteArray()))
         mgf.generateBytes(mask, 0, message.size)
 
-        return ByteArray(message.size) {i -> message[i].toByte() xor mask[i]}
+        return ByteArray(message.size) { i -> message[i].toByte() xor mask[i] }
 
     }
 
@@ -75,7 +117,9 @@ class Sha256r(
         md.update(PKSeed)
         md.update(padding)
         md.update(address.address)
-        msg.forEach { m -> md.update(maskMessage(m, PKSeed, address)) }
+
+        val mask = generateMask(PKSeed, address, msg[0].size)
+        msg.forEach { m -> md.update(maskMessage(m, mask)) }
 
         return md.digest().toUByteArray()
 
@@ -118,7 +162,6 @@ class Sha256r(
         md.update(publicKey.root)
         md.update(message)
 
-        val len = ((k * a + 7) / 8) + ((height - height / layers + 7) / 8) + ((height / layers + 7) / 8)
         val out = ByteArray(len)
 
         mgf.init(MGFParameters(md.digest()))

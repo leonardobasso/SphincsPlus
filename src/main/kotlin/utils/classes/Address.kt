@@ -16,6 +16,7 @@ import org.example.utils.functions.toUInt
 class Address {
 
     var address = UByteArray(32)
+    val size = address.size
 
     /**
      * Creates a new address which is a deep copy of the original address
