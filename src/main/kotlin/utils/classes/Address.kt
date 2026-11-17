@@ -28,6 +28,27 @@ class Address {
         clone.address = this.address.copyOf()
         return clone
     }
+
+    /**
+     * To ensure that we require the minimal number of calls to the SHA-256
+     * compression function, we use a compressed ADRS for each of these instances.
+     *
+     * Where possible, this allows for the SHA2 padding to fit within the last input block. Rather than storing the
+     * layer address and type field ina full 4-byte word each, we only include the least-significant byte
+     * of each. Similarly, we only include the least-significant 8 bytes of the 12-byte tree address.
+     *
+     * @return a 22 Byte compressed address
+     */
+    fun compress(): UByteArray {
+        val out = UByteArray(22)
+        out[0] = address[3] // Layer
+        address.copyInto(out, 1, 8, 16) // Tree
+        out[9] = address[19] // Type
+
+        address.copyInto(out, 10, 20, 32) // the rest
+
+        return out
+    }
     /**
      * Sets the Layer Address in the Address Data Structure
      *

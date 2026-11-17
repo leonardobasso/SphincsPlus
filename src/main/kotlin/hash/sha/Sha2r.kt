@@ -52,15 +52,15 @@ class Sha2r(
     /**
      * Generates a mask from the Public Key's seed and the address
      * @param PKSeed the public key's seed
-     * @param address the address
+     * @param comp the compressed address
      * @param size the mask size, it should be the same size of the message you want to mask
      *
      * @return the mask
      */
-    private fun generateMask(PKSeed: UByteArray, address: Address, size: Int, mgf: MGF1BytesGenerator): ByteArray {
+    private fun generateMask(PKSeed: UByteArray, comp: UByteArray, size: Int, mgf: MGF1BytesGenerator): ByteArray {
         val mask = ByteArray(size)
 
-        mgf.init(MGFParameters((PKSeed + address.address).toByteArray()))
+        mgf.init(MGFParameters((PKSeed + comp).toByteArray()))
         mgf.generateBytes(mask, 0, size)
         return mask
 
@@ -84,14 +84,14 @@ class Sha2r(
      *
      * @param message the message to mask
      * @param PKSeed the public key's seed
-     * @param address the address
+     * @param comp the compressed address
      *
      * @return the masked message
      */
-    private fun maskMessage(message: UByteArray, PKSeed: UByteArray, address: Address, mgf: MGF1BytesGenerator): ByteArray {
+    private fun maskMessage(message: UByteArray, PKSeed: UByteArray, comp: UByteArray, mgf: MGF1BytesGenerator): ByteArray {
         val mask = ByteArray(message.size)
 
-        mgf.init(MGFParameters((PKSeed + address.address).toByteArray()))
+        mgf.init(MGFParameters((PKSeed + comp).toByteArray()))
         mgf.generateBytes(mask, 0, message.size)
 
         return ByteArray(message.size) { i -> message[i].toByte() xor mask[i] }
@@ -104,10 +104,12 @@ class Sha2r(
 
         md.reset()
 
+        val comp = address.compress()
+
         md.update(PKSeed)
         md.update(pad64)
-        md.update(address.address)
-        md.update(maskMessage(msg, PKSeed, address, mgf64))
+        md.update(comp)
+        md.update(maskMessage(msg, PKSeed, comp, mgf64))
 
         return md.digest().copyOf(n).toUByteArray()
     }
@@ -117,7 +119,7 @@ class Sha2r(
 
         md.update(PKSeed)
         md.update(pad64)
-        md.update(address.address)
+        md.update(address.compress())
         md.update(SKSeed)
 
         return md.digest().copyOf(n).toUByteArray()
@@ -129,14 +131,16 @@ class Sha2r(
     ): UByteArray {
         mdX.reset()
 
+        val comp = address.compress()
+
         mdX.update(PKSeed)
         mdX.update(padX)
-        mdX.update(address.address)
+        mdX.update(comp)
 
-        val mask = generateMask(PKSeed, address, msg[0].size, mgfX)
+        val mask = generateMask(PKSeed, comp, msg[0].size, mgfX)
         msg.forEach { m -> mdX.update(maskMessage(m, mask)) }
 
-        return mdX.digest().toUByteArray()
+        return mdX.digest().copyOf(n).toUByteArray()
 
     }
 
@@ -145,10 +149,12 @@ class Sha2r(
     ): UByteArray {
         mdX.reset()
 
+        val comp = address.compress()
+
         mdX.update(PKSeed)
         mdX.update(padX)
-        mdX.update(address.address)
-        mdX.update(maskMessage(msg, PKSeed, address, mgfX))
+        mdX.update(comp)
+        mdX.update(maskMessage(msg, PKSeed, comp, mgfX))
 
         return mdX.digest().copyOf(n).toUByteArray()
 

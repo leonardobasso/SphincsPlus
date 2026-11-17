@@ -54,7 +54,7 @@ class Sha2s(
 
         md.update(PKSeed)
         md.update(pad64)
-        md.update(address.address)
+        md.update(address.compress())
         md.update(msg)
 
         return md.digest().copyOf(n).toUByteArray()
@@ -65,7 +65,7 @@ class Sha2s(
 
         md.update(PKSeed)
         md.update(pad64)
-        md.update(address.address)
+        md.update(address.compress())
         md.update(SKSeed)
 
         return md.digest().copyOf(n).toUByteArray()
@@ -78,10 +78,10 @@ class Sha2s(
 
         mdX.update(PKSeed)
         mdX.update(padX)
-        mdX.update(address.address)
+        mdX.update(address.compress())
         msg.forEach { m -> mdX.update(m) }
 
-        return mdX.digest().toUByteArray()
+        return mdX.digest().copyOf(n).toUByteArray()
 
     }
 
@@ -92,7 +92,7 @@ class Sha2s(
 
         mdX.update(PKSeed)
         mdX.update(padX)
-        mdX.update(address.address)
+        mdX.update(address.compress())
         mdX.update(msg)
 
         return mdX.digest().copyOf(n).toUByteArray()
@@ -134,7 +134,7 @@ class Sha2s(
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-inline fun MessageDigest.update(array: UByteArray) = this.update(array.asByteArray())
+fun MessageDigest.update(array: UByteArray) = this.update(array.asByteArray())
 
 @OptIn(ExperimentalUnsignedTypes::class)
-inline fun Mac.update(array: UByteArray) = this.update(array.asByteArray())
+fun Mac.update(array: UByteArray) = this.update(array.asByteArray())
