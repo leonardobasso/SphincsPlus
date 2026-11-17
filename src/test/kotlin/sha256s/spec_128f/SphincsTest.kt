@@ -1,6 +1,6 @@
 package sha256s.spec_128f
 
-import org.example.hash.Sha256s
+import org.example.hash.Sha2s
 import org.example.hypertree.Hypertree
 import org.example.sphincs.Sphincs
 import org.example.sphincs.SphincsSignature
@@ -25,7 +25,7 @@ class SphincsTest {
 
     val message = Random.nextUBytes(n)
 
-    val sha = Sha256s(n, height, layers, k, a)
+    val sha = Sha2s(n, height, layers, k, a)
     val wots = WOTS(n, w.toUInt(), sha)
     val xmss = XMSS(height / layers, n.toUInt(), w.toUInt(), wots, sha)
     val hyperTree = Hypertree(height.toUInt(), layers.toUInt(), w.toUInt(), xmss)

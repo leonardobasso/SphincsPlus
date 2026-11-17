@@ -1,3 +1,5 @@
+# Sphincs+ Implementation in Kotlin
+
 ### Notes:
 
 In the [Sphincs+ v3 doc](https://sphincs.org/resources.html) functions are "base" based while in the 
@@ -12,3 +14,5 @@ of SLH-DSA
 ```./gradlew benchmark```
 
 You can find the results in `SphincsPlus/build/reports/benchmarks/main/...`
+
+_Please, do not use this in production._

@@ -38,11 +38,11 @@ class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
      *
      * @return the secret key
      */
-    fun skGen(SKSeed: UByteArray, address: Address, index: UInt): UByteArray {
+    fun skGen(SKSeed: UByteArray, PKSeed: UByteArray, address: Address, index: UInt): UByteArray {
 
         address.setTreeHeight(0u)
         address.setTreeIndex(index)
-        return hashPRF(SKSeed, address)
+        return hashPRF(SKSeed, PKSeed, address)
     }
 
     /**
@@ -71,7 +71,7 @@ class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
         for (i in 0u until h) {
             address.setTreeHeight(0u)
             address.setTreeIndex(startIndex + i)
-            val sk = hashPRF(SKSeed, address)
+            val sk = hashPRF(SKSeed, PKSeed, address)
             var node = hashF(PKSeed, address, sk)
             address.setTreeHeight(1u)
             address.setTreeIndex(startIndex + i)
@@ -159,7 +159,7 @@ class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
 
             address.setTreeHeight(0u)
             address.setTreeIndex(ui * t + index[i])
-            val leaf = hashPRF(SKSeed, address)
+            val leaf = hashPRF(SKSeed, PKSeed, address)
 
             for (j in 0 until a) {
                 val s = (index[i] / (1u shl j)) xor 1u
@@ -171,6 +171,7 @@ class FORS(val k: UInt, val a: Int, val n: UInt, val hash: HashInterface) {
         }
         return signature
     }
+
     /**
      * Gets publci key from signature
      *

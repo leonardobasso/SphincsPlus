@@ -5,7 +5,7 @@ import org.openjdk.jmh.annotations.State
 import org.openjdk.jmh.annotations.Warmup
 import kotlin.random.Random
 import kotlin.random.nextUBytes
-import org.example.hash.Sha256s
+import org.example.hash.Sha2s
 import org.example.hypertree.Hypertree
 import org.example.sphincs.Sphincs
 import org.example.utils.functions.keyGen
@@ -30,7 +30,7 @@ class Spec245F {
     val a = 9
     val k = 35
 
-    val sha = Sha256s(n, height, layers, k, a)
+    val sha = Sha2s(n, height, layers, k, a)
     val wots = WOTS(n, w, sha)
     val xmss = XMSS(height / layers, n.toUInt(), w, wots, sha)
     val hyperTree = Hypertree(height.toUInt(), layers.toUInt(), w, xmss)

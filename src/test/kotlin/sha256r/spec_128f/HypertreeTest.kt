@@ -1,6 +1,6 @@
 package sha256r.spec_128f
 
-import org.example.hash.Sha256r
+import org.example.hash.Sha2r
 import org.example.hypertree.Hypertree
 import org.example.utils.classes.Address
 import org.example.wots.WOTS
@@ -21,7 +21,7 @@ class HypertreeTest {
     val a = 6
     val k = 33
 
-    val sha = Sha256r(n, height, layers, k, a)
+    val sha = Sha2r(n, height, layers, k, a)
     val wots = WOTS(n, w.toUInt(), sha)
     val xmss = XMSS(height / layers  , n.toUInt(), w.toUInt(), wots, sha)
 

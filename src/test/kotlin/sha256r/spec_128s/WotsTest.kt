@@ -1,6 +1,6 @@
 package sha256r.spec_128s
 
-import org.example.hash.Sha256r
+import org.example.hash.Sha2r
 import org.example.utils.classes.Address
 import org.example.wots.WOTS
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ class WotsTest {
     val a = 12
     val k = 14
 
-    val sha = Sha256r(n, height, layers, k, a)
+    val sha = Sha2r(n, height, layers, k, a)
     val wots = WOTS(n, w.toUInt(), sha)
 
     @Test

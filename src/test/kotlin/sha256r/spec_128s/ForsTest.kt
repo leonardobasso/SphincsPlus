@@ -1,7 +1,7 @@
 package sha256r.spec_128s
 
 import org.example.fors.FORS
-import org.example.hash.Sha256r
+import org.example.hash.Sha2r
 import org.example.utils.classes.Address
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
@@ -20,7 +20,7 @@ class ForsTest {
 
     val mLen = (a * k + 7) / 8
 
-    val sha = Sha256r(n, height, layers, k, a)
+    val sha = Sha2r(n, height, layers, k, a)
     val fors = FORS(k.toUInt(), a, n.toUInt(), sha)
 
     @Test

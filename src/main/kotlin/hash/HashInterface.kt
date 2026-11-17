@@ -5,8 +5,8 @@ import org.example.utils.classes.PublicKey
 
 /**
  * Interface for the hash functions used in Sphincs+
- * @see Sha256s
- * @see Sha256r
+ * @see Sha2s
+ * @see Sha2r
  * @see Shake256s
  */
 interface HashInterface {
@@ -23,7 +23,7 @@ interface HashInterface {
      *  *Sphincs+ 2.7.2)*
      */
     @OptIn(ExperimentalUnsignedTypes::class)
-    fun hashPRF(SKSeed: UByteArray, address: Address): UByteArray
+    fun hashPRF(SKSeed: UByteArray, PKSeed: UByteArray, address: Address): UByteArray
 
     /**
      * Tℓ(PK.seed, ADRS, 𝑀ℓ) (𝔹𝑛 × 𝔹32 × 𝔹ℓ𝑛 → 𝔹𝑛) is a hash function that maps an

@@ -61,7 +61,7 @@ class WOTS(val n: Int, val w: UInt, val hash: HashInterface) {
         for (i in 0 until len) {
             address.setChainAddress(i.toUInt())
             address.setHashAddress(0u)
-            sk = hashPRF(SKSeed, address)
+            sk = hashPRF(SKSeed, PKSeed, address)
             temp[i] = chain(
                 sk, 0u, w - 1u, PKSeed, address
             ) //pseudocode says tmp[i] = chain(sk[i], 0, w - 1, PK.seed, ADRS); I that think s[i] is an error
@@ -105,7 +105,7 @@ class WOTS(val n: Int, val w: UInt, val hash: HashInterface) {
         for (i in 0 until len) {
             address.setChainAddress(i.toUInt())
             address.setHashAddress(0u)
-            sk = hashPRF(SKSeed, address)
+            sk = hashPRF(SKSeed, PKSeed, address)
             sign[i] = chain(sk, 0u, msg[i], PKSeed, address)
         }
         return sign
