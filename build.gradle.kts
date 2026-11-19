@@ -25,8 +25,9 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
     implementation(kotlin("stdlib"))
-    implementation("org.bouncycastle:bcprov-jdk18on:1.86")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.87")
     "benchmarkImplementation"(sourceSets.main.get().output)
     "benchmarkImplementation"(sourceSets.main.get().runtimeClasspath)
     "benchmarkImplementation"("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.5.0")
