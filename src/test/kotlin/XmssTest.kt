@@ -1,5 +1,3 @@
-package sha2
-
 import org.example.hash.HashInterface
 import org.example.hash.Sha2r
 import org.example.hash.Sha2s

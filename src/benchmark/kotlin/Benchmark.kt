@@ -1,16 +1,19 @@
-package sha256s
+package org.example.benchmark
 
 import kotlinx.benchmark.BenchmarkMode
 import kotlinx.benchmark.Mode
 import kotlinx.benchmark.OutputTimeUnit
 import kotlinx.benchmark.Param
 import kotlinx.benchmark.Setup
+import org.example.hash.Sha2r
+import org.example.hash.Sha2s
+import org.example.hash.Shake256r
+import org.example.hash.Shake256s
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
 import org.openjdk.jmh.annotations.Warmup
 import kotlin.random.Random
 import kotlin.random.nextUBytes
-import org.example.hash.Sha2s
 import org.example.hypertree.Hypertree
 import org.example.sphincs.Sphincs
 import org.example.sphincs.SphincsSignature
@@ -27,16 +30,18 @@ import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalUnsignedTypes::class)
 @State(Scope.Benchmark)
-@BenchmarkMode(Mode.Throughput, Mode.AverageTime)
+@BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Fork(1)
-class ShaBenchmarks {
-
+class Benchmark {
 
     @Param("128f", "128s", "192f", "192s", "256f", "256s")
     var variant: String = ""
+
+    @Param("Sha2r", "Sha2s", "Shake256r", "Shake256s")
+    var hashName: String = ""
 
 
     private lateinit var sphincs: Sphincs
@@ -80,10 +85,18 @@ class ShaBenchmarks {
                 n = 32; height = 68; layers = 17; a = 9; k = 35
             }
 
-            else -> throw IllegalArgumentException("Variante non supportata: $variant")
+            else -> throw IllegalArgumentException("Nonexistent variant: $variant")
         }
 
-        val hash = Sha2s(n, height, layers, k, a)
+        val hash = when (hashName) {
+            "Sha2r" -> Sha2r(n, height, layers, k, a)
+            "Sha2s" -> Sha2s(n, height, layers, k, a)
+            "Shake256r" -> Shake256r(n, height, layers, k, a)
+            "Shake256s" -> Shake256s(n, height, layers, k, a)
+            else -> throw IllegalArgumentException("Nonexistent hash: $hashName")
+
+        }
+
         val wots = WOTS(n, w, hash)
         val xmss = XMSS(height / layers, n.toUInt(), w, wots, hash)
         hyperTree = Hypertree(height.toUInt(), layers.toUInt(), w, xmss)

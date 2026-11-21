@@ -1,5 +1,3 @@
-package sha2
-
 import org.example.fors.FORS
 import org.example.hash.HashInterface
 import org.example.hash.Sha2r

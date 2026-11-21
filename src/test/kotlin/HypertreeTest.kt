@@ -1,5 +1,3 @@
-package sha2
-
 import org.example.hash.HashInterface
 import org.example.hash.Sha2r
 import org.example.hash.Sha2s
@@ -67,10 +65,11 @@ class HypertreeTest {
             "Shake256 simple" -> Shake256s(n, height, layers, k, a)
             else -> throw IllegalArgumentException("$hash does not exist")
         }
+
         val wots = WOTS(n, w, hash)
         val xmss = XMSS(height / layers, n.toUInt(), w, wots, hash)
-
         val hypertree = Hypertree(height.toUInt(), layers.toUInt(), w, xmss)
+
         val message = Random.nextUBytes(n)
         val skSeed = Random.nextUBytes(n)
         val pkSeed = Random.nextUBytes(n)
